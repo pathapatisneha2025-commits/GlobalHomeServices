@@ -1,25 +1,56 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-function App() {
+// COMPONENT IMPORTS
+import Navbar from "./components/Navbar";
+import HeroSection from "./components/HeroSection";
+import HomeServices from "./components/HomeServices";
+import EventServices from "./components/EventServices";
+import GlobalProcess from "./components/GlobalProcess";
+import WhyChooseUs from "./components/WhyChooseUs";
+import CtaSection from "./components/CtaSection";
+import Footer from "./components/Footer";
+
+// PAGES
+import HowItWorkPage from "./pages/Howitworkspage";
+import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
+import HomeHelpers from "./pages/HomeHelpers";
+import EventServicesPage from "./pages/EventHelpers";
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      {/* COMMON NAVBAR */}
+      <Navbar />
+
+      <Routes>
+        {/* HOME PAGE */}
+        <Route
+          path="/"
+          element={
+            <>
+              <HeroSection />
+              <HomeServices />
+              <EventServices />
+              <GlobalProcess />
+              <WhyChooseUs />
+              <CtaSection />
+            </>
+          }
+        />
+
+        {/* OTHER PAGES */}
+        <Route path="/howitworks" element={<HowItWorkPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/homehelper" element={<HomeHelpers />} />
+                <Route path="/eventservices" element={<EventServicesPage />} />
+
+        <Route path="/contact" element={<ContactPage/>} />
+      </Routes>
+
+      {/* COMMON FOOTER */}
+      <Footer />
+    </Router>
   );
 }
-
-export default App;
