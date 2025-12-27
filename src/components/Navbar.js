@@ -3,11 +3,19 @@ import { NavLink, Link } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
 
 export default function Navbar() {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false); // desktop hover
+  const [mobileOpen, setMobileOpen] = useState(false); // mobile menu
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false); // mobile dropdown
 
-  const toggleMobileMenu = () => setMobileOpen(!mobileOpen);
-  const closeMobileMenu = () => setMobileOpen(false);
+  const toggleMobileMenu = () => {
+    setMobileOpen(!mobileOpen);
+    if (mobileOpen) setMobileDropdownOpen(false); // close dropdown when closing menu
+  };
+
+  const closeMobileMenu = () => {
+    setMobileOpen(false);
+    setMobileDropdownOpen(false);
+  };
 
   const styles = {
     navbar: {
@@ -22,69 +30,6 @@ export default function Navbar() {
       borderBottom: "1px solid rgba(255, 215, 0, 0.15)",
     },
     logo: { height: 80 },
-    menu: {
-      display: "flex",
-      gap: "28px",
-      alignItems: "center",
-    },
-    menuMobile: {
-      flexDirection: "column",
-      gap: "14px",
-      position: "absolute",
-      top: "100%",
-      left: 0,
-      right: 0,
-      background: "linear-gradient(180deg, #0b0f14, #05070a)",
-      padding: "20px",
-      borderBottom: "1px solid rgba(255, 215, 0, 0.15)",
-      zIndex: 1000,
-    },
-    menuItem: {
-      color: "#cfd3dc",
-      textDecoration: "none",
-      fontSize: "15px",
-      fontWeight: 500,
-      cursor: "pointer",
-      position: "relative",
-    },
-    menuItemActive: { color: "#f5c542" },
-    dropdown: { position: "relative" },
-    dropdownMenu: {
-      position: "absolute",
-      top: "34px",
-      left: 0,
-      background: "#0d1117",
-      border: "1px solid rgba(255, 215, 0, 0.15)",
-      borderRadius: "8px",
-      display: "flex",
-      flexDirection: "column",
-      minWidth: "160px",
-      zIndex: 1001,
-    },
-    dropdownItem: {
-      padding: "10px 14px",
-      fontSize: "14px",
-      color: "#cfd3dc",
-      textDecoration: "none",
-    },
-    actions: { display: "flex", gap: "14px" },
-    btnOutline: {
-      padding: "8px 16px",
-      border: "1px solid #f5c542",
-      color: "#f5c542",
-      borderRadius: "999px",
-      textDecoration: "none",
-      fontSize: "14px",
-    },
-    btnPrimary: {
-      padding: "8px 18px",
-      background: "linear-gradient(135deg, #f5c542, #d4a017)",
-      color: "#000",
-      borderRadius: "999px",
-      textDecoration: "none",
-      fontSize: "14px",
-      fontWeight: 600,
-    },
   };
 
   return (
@@ -94,28 +39,30 @@ export default function Navbar() {
         <img src="/companylogo.png" alt="GLOBAL" style={styles.logo} />
       </div>
 
-      {/* Hamburger for mobile */}
+      {/* Hamburger */}
       <div className="hamburger" onClick={toggleMobileMenu}>
         {mobileOpen ? <FiX size={28} color="#f5c542" /> : <FiMenu size={28} color="#f5c542" />}
       </div>
 
       {/* Menu */}
       <nav className={`menu ${mobileOpen ? "open" : ""}`}>
-        <NavLink
-          to="/"
-          onClick={closeMobileMenu}
-          className={({ isActive }) => (isActive ? "menu-item active" : "menu-item")}
-        >
+        <NavLink to="/" onClick={closeMobileMenu} className="menu-item">
           Home
         </NavLink>
 
+        {/* Services Dropdown */}
         <div
           className="dropdown"
           onMouseEnter={() => !mobileOpen && setDropdownOpen(true)}
           onMouseLeave={() => !mobileOpen && setDropdownOpen(false)}
         >
-          <span className="menu-item">Services ▾</span>
-          {(dropdownOpen || mobileOpen) && (
+          <span
+            className="menu-item"
+            onClick={() => mobileOpen && setMobileDropdownOpen(!mobileDropdownOpen)}
+          >
+            Services ▾
+          </span>
+          {(dropdownOpen || mobileDropdownOpen) && (
             <div className="dropdown-menu">
               <NavLink to="/homehelper" onClick={closeMobileMenu} className="dropdown-item">
                 HomeServices
@@ -137,6 +84,7 @@ export default function Navbar() {
           Contact
         </NavLink>
 
+        {/* Mobile Actions */}
         {mobileOpen && (
           <div className="mobile-actions">
             <Link to="/vendor-login" className="btn-outline" onClick={closeMobileMenu}>
@@ -149,7 +97,7 @@ export default function Navbar() {
         )}
       </nav>
 
-      {/* Desktop actions */}
+      {/* Desktop Actions */}
       <div className="desktop-actions">
         <Link to="/vendor-login" className="btn-outline">
           Vendor Login
