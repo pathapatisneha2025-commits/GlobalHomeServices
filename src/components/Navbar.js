@@ -1,8 +1,13 @@
 import React, { useState } from "react";
 import { NavLink, Link } from "react-router-dom";
+import { FiMenu, FiX } from "react-icons/fi"; // Hamburger icons
 
 export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const toggleMobileMenu = () => setMobileOpen(!mobileOpen);
+  const closeMobileMenu = () => setMobileOpen(false);
 
   const styles = {
     navbar: {
@@ -17,7 +22,24 @@ export default function Navbar() {
       borderBottom: "1px solid rgba(255, 215, 0, 0.15)",
     },
     logo: { height: 80 },
-    menu: { display: "flex", gap: "28px", alignItems: "center" },
+    menu: {
+      display: "flex",
+      gap: "28px",
+      alignItems: "center",
+    },
+    menuMobile: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "14px",
+      position: "absolute",
+      top: "100%",
+      left: 0,
+      right: 0,
+      background: "linear-gradient(180deg, #0b0f14, #05070a)",
+      padding: "20px",
+      borderBottom: "1px solid rgba(255, 215, 0, 0.15)",
+      zIndex: 1000,
+    },
     menuItem: {
       color: "#cfd3dc",
       textDecoration: "none",
@@ -64,6 +86,12 @@ export default function Navbar() {
       fontSize: "14px",
       fontWeight: 600,
     },
+    hamburger: {
+      display: "none",
+      fontSize: "28px",
+      cursor: "pointer",
+      color: "#f5c542",
+    },
   };
 
   return (
@@ -73,10 +101,26 @@ export default function Navbar() {
         <img src="/companylogo.png" alt="GLOBAL" style={styles.logo} />
       </div>
 
+      {/* Hamburger icon for mobile */}
+      <div
+        style={styles.hamburger}
+        className="hamburger"
+        onClick={toggleMobileMenu}
+      >
+        {mobileOpen ? <FiX /> : <FiMenu />}
+      </div>
+
       {/* Menu */}
-      <nav style={styles.menu}>
+      <nav
+        style={{
+          ...styles.menu,
+          ...(mobileOpen ? styles.menuMobile : {}),
+        }}
+        className={mobileOpen ? "mobile-menu" : ""}
+      >
         <NavLink
           to="/"
+          onClick={closeMobileMenu}
           style={({ isActive }) =>
             isActive ? { ...styles.menuItem, ...styles.menuItemActive } : styles.menuItem
           }
@@ -87,25 +131,25 @@ export default function Navbar() {
         {/* Dropdown */}
         <div
           style={styles.dropdown}
-          onMouseEnter={() => setDropdownOpen(true)}
-          onMouseLeave={() => setDropdownOpen(false)}
+          onMouseEnter={() => !mobileOpen && setDropdownOpen(true)}
+          onMouseLeave={() => !mobileOpen && setDropdownOpen(false)}
         >
           <span style={styles.menuItem}>Services ▾</span>
-          {dropdownOpen && (
+          {(dropdownOpen || mobileOpen) && (
             <div style={styles.dropdownMenu}>
-              <NavLink to="/homehelper" style={styles.dropdownItem}>
-               HomeServices
+              <NavLink to="/homehelper" style={styles.dropdownItem} onClick={closeMobileMenu}>
+                HomeServices
               </NavLink>
-              <NavLink to="/eventservices" style={styles.dropdownItem}>
-                EventServiices
+              <NavLink to="/eventservices" style={styles.dropdownItem} onClick={closeMobileMenu}>
+                EventServices
               </NavLink>
-           
             </div>
           )}
         </div>
 
         <NavLink
           to="/howitworks"
+          onClick={closeMobileMenu}
           style={({ isActive }) =>
             isActive ? { ...styles.menuItem, ...styles.menuItemActive } : styles.menuItem
           }
@@ -114,6 +158,7 @@ export default function Navbar() {
         </NavLink>
         <NavLink
           to="/about"
+          onClick={closeMobileMenu}
           style={({ isActive }) =>
             isActive ? { ...styles.menuItem, ...styles.menuItemActive } : styles.menuItem
           }
@@ -122,16 +167,29 @@ export default function Navbar() {
         </NavLink>
         <NavLink
           to="/contact"
+          onClick={closeMobileMenu}
           style={({ isActive }) =>
             isActive ? { ...styles.menuItem, ...styles.menuItemActive } : styles.menuItem
           }
         >
           Contact
         </NavLink>
+
+        {/* Actions (mobile) */}
+        {mobileOpen && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "14px", marginTop: "14px" }}>
+            <Link to="/vendor-login" style={styles.btnOutline} onClick={closeMobileMenu}>
+              Vendor Login
+            </Link>
+            <Link to="/book-now" style={styles.btnPrimary} onClick={closeMobileMenu}>
+              Book Now
+            </Link>
+          </div>
+        )}
       </nav>
 
-      {/* Actions */}
-      <div style={styles.actions}>
+      {/* Desktop actions */}
+      <div style={styles.actions} className="desktop-actions">
         <Link to="/vendor-login" style={styles.btnOutline}>
           Vendor Login
         </Link>
@@ -139,6 +197,21 @@ export default function Navbar() {
           Book Now
         </Link>
       </div>
+
+      {/* Responsive styles */}
+      <style>{`
+        @media (max-width: 768px) {
+          nav {
+            display: ${mobileOpen ? "flex" : "none"};
+          }
+          .hamburger {
+            display: block;
+          }
+          .desktop-actions {
+            display: none;
+          }
+        }
+      `}</style>
     </header>
   );
 }
